@@ -30,7 +30,10 @@ function getIngredients() {
   // 3. Resolve with "Ingredients ready"
 
   return new Promise((resolve, reject) => {
-    // Your code here
+    showMessage("Gathering ingredients...");
+    wait(2000).then(() => {
+      resolve("Ingredients ready");
+    });
   });
 }
 
@@ -43,7 +46,14 @@ function blendSmoothie() {
   // 4. Otherwise resolve with "Smoothie blended"
 
   return new Promise((resolve, reject) => {
-    // Your code here
+    showMessage("Blending smoothie...");
+    wait(3000).then(() => {
+      if (Math.random() < 0.3) {
+        reject("Sorry, blender broke ;(")
+      } 
+      else 
+        resolve("Smoothie blended");
+    });
   });
 }
 
@@ -55,7 +65,10 @@ function pourSmoothie() {
   // 3. Resolve with "Smoothie is ready!"
 
   return new Promise((resolve, reject) => {
-    // Your code here
+    showMessage("Pouring into cup...");
+    wait(1000).then(() => {
+      resolve("Smoothie is ready!");
+    });
   });
 }
 
@@ -67,11 +80,21 @@ function makeSmoothieWithPromises() {
   outputDiv.innerHTML = ""; // Clear previous messages
 
   // TODO: Chain the steps in order using .then()
-  // getIngredients()
-  //   .then(...)
-  //   .then(...)
-  //   .then(...)
-  //   .catch(...)
+   getIngredients()
+    .then(result => {
+      showMessage(result);
+      return blendSmoothie();
+    })
+    .then(result => {
+      showMessage(result);
+      return pourSmoothie();
+    })
+    .then(result => {
+      showMessage(result);
+    })
+    .catch(error => {
+      showMessage("Error: " + error);
+    });
 }
 
 /* =========================
@@ -88,4 +111,16 @@ async function makeSmoothieAsync() {
   // await pourSmoothie()
   // Show final success message
   // Catch and display any errors
+  try {
+    const resultIngrediants = await getIngredients();
+    showMessage(resultIngrediants);
+    const resultBlend = await blendSmoothie();
+    showMessage(resultBlend);
+    const resultPour = await pourSmoothie();
+    showMessage(resultPour);
+  } catch (error) {
+    showMessage("Error: " + error);
+  }
 }
+
+button.addEventListener("click", makeSmoothieWithPromises);
